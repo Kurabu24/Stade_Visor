@@ -1,55 +1,83 @@
-# StadeVisor - Disponibilités des Stades à Marseille
+# StadeVisor
 
-## Description
+StadeVisor est une application web permettant d'afficher les disponibilités des stades à Marseille et de réserver des heures pour jouer librement.
 
-StadeVisor est une plateforme web permettant d'afficher les disponibilités des stades à Marseille et de réserver des créneaux horaires pour jouer librement. Notre objectif est de simplifier l'accès aux infrastructures sportives en proposant une interface claire et intuitive.
+## Prérequis
 
-## Fonctionnalités
+Avant d'installer le projet, assurez-vous d'avoir les éléments suivants installés sur votre machine :
 
-- **Consultation des disponibilités** : Affichage en temps réel des créneaux libres des stades de Marseille.
-- **Réservation de créneaux** : Possibilité de réserver un stade pour une durée déterminée.
-- **Filtrage et recherche** : Recherche des stades par emplacement, type de terrain, horaires disponibles, etc.
-- **Interface utilisateur intuitive** : Affichage des données sous forme de calendrier ou de liste.
+- [Node.js](https://nodejs.org/) (version 16 ou supérieure recommandée)
+- [npm](https://www.npmjs.com/) (installé avec Node.js)
+- [Git](https://git-scm.com/)
 
-## Technologies utilisées
+## Installation
 
-- **Frontend** : HTML, CSS, JavaScript
-- **Backend** : Python (Flask ou Django)
-- **Base de données** : PostgreSQL ou MongoDB
-- **API** : Intégration d'une API pour récupérer et gérer les disponibilités des stades
-
-## Installation et exécution
-
-1. Clonez le dépôt :
+1. Clonez ce dépôt :
 
    ```bash
-   git clone https://github.com/votre-repo/stadevisor.git
-   cd stadevisor
+   git clone https://github.com/votre-utilisateur/StadeVisor.git
+   cd StadeVisor
    ```
 
 2. Installez les dépendances :
 
    ```bash
-   pip install -r requirements.txt
+   npm install
    ```
 
-3. Lancez le serveur :
+3. Configurez la base de données SQLite :
 
    ```bash
-   python app.py
+   npm run migrate
    ```
 
-4. Accédez au site via `http://localhost:5000`
+## Démarrage du serveur
 
-## Contribution
+Pour démarrer l'application en mode développement, exécutez :
 
-Toute contribution est la bienvenue ! Vous pouvez proposer des améliorations, signaler des bugs ou soumettre des pull requests.
+```bash
+npm start
+```
+
+Le serveur sera accessible sur : `http://localhost:3000`
+
+## Structure du projet
+
+```
+StadeVisor/
+├── controllers/      # Logique des routes
+├── models/           # Gestion de la base de données
+├── routes/           # Définition des routes Express
+├── views/            # Fichiers Mustache pour l'affichage
+├── public/           # Fichiers statiques (CSS, JS)
+├── app.js            # Point d'entrée principal
+├── package.json      # Fichier de configuration npm
+└── README.md         # Documentation du projet
+```
+
+## Technologies utilisées
+
+- **Node.js** + **Express.js** : Backend
+- **Mustache** : Templates HTML
+- **SQLite** : Base de données
+- **Tailwind CSS** : Stylisation de l'interface utilisateur
+
+## Fonctionnalités
+
+- Affichage des stades et de leurs disponibilités
+- Formulaire de réservation d'un créneau
+- Interface responsive avec Tailwind CSS
+- Gestion des utilisateurs avec authentification
+
+## Contributions
+
+Les contributions sont les bienvenues ! Merci de forker le dépôt et de proposer une pull request.
 
 ## Licence
 
 Ce projet est sous licence MIT.
 
----
+## Auteurs
 
 📧 Contact : <akram.bouhraoua@etu.univ-amu.fr> - <martin.pouget@etu.univ-amu.fr>
 🌐 Site officiel : (en cours de developpement )
