@@ -8,8 +8,8 @@ function listStades(req, res) {
 function createStade(req, res) {
     if (!req.session.user) return res.redirect("/login");
 
-    const { name, location, capacity } = req.body;
-    stadeModel.createStade(name, location, capacity, req.session.user.id);
+    const { name, location} = req.body;
+    stadeModel.createStade(name, location , req.session.user.id);
     res.redirect("/");
 }
 

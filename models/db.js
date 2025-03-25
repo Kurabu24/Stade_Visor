@@ -14,7 +14,6 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     location TEXT NOT NULL,
-    capacity INTEGER NOT NULL,
     created_by INTEGER NOT NULL,
     FOREIGN KEY (created_by) REFERENCES users(id)
   );

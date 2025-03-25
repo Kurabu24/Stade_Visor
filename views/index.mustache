@@ -4,7 +4,7 @@
 <ul>
   {{#stades}}
     <li>
-      <strong>{{name}}</strong> - {{location}} (Capacité : {{capacity}})
+      <strong>{{name}}</strong> - {{location}}
       <form action="/reserve" method="POST" class="inline">
         <input type="hidden" name="stade_id" value="{{id}}">
         <input type="date" name="date" required>
@@ -20,7 +20,6 @@
   <form action="/stade/create" method="POST">
     <input type="text" name="name" placeholder="Nom du stade" required>
     <input type="text" name="location" placeholder="Localisation" required>
-    <input type="number" name="capacity" placeholder="Capacité" required>
     <button type="submit" class="bg-green-500 text-white px-4 py-2">Ajouter</button>
   </form>
 {{/user}}

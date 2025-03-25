@@ -1,9 +1,9 @@
 const db = require("./db");
 
-function createStade(name, location, capacity, created_by) {
+function createStade(name, location, created_by) {
     return db
-        .prepare("INSERT INTO stades (name, location, capacity, created_by) VALUES (?, ?, ?, ?)")
-        .run(name, location, capacity, created_by);
+        .prepare("INSERT INTO stades (name, location, created_by) VALUES (?, ?, ?)")
+        .run(name, location, created_by);
 }
 
 function getAllStades() {
