@@ -1,31 +1,50 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2 class="text-2xl font-bold mb-4">Créer un compte</h2>
+  <div class="max-w-md mx-auto mt-10 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 animate-fade-in">
+    <h2 class="text-2xl font-bold text-center text-blue-600 dark:text-blue-400 mb-6">Créer un compte</h2>
 
-<form action="/register" method="post" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-    <div class="mb-4">
-        <label class="block text-gray-700 font-bold mb-2" for="email">Adresse email</label>
-        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
-               id="email" name="email" type="email" required>
-    </div>
+    <form action="/register" method="post" class="space-y-5">
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Adresse email</label>
+        <input id="email" name="email" type="email" required class="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+      </div>
 
-    <div class="mb-4">
-        <label class="block text-gray-700 font-bold mb-2" for="password">Mot de passe</label>
-        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
-               id="password" name="password" type="password" required>
-    </div><div class="mb-4">
-        <label class="block text-gray-700 font-bold mb-2" for="password_confirm">Confirmer le mot de passe</label>
-        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
-               id="password_confirm" name="password_confirm" type="password" required>
-    </div>
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Mot de passe</label>
+        <input id="password" name="password" type="password" required class="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+      </div>
 
-    <div class="flex items-center justify-between">
-        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit">
-            S'inscrire
-        </button>
-    </div>
-</form>
+      <div>
+        <label for="password_confirm" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Confirmer le mot de passe</label>
+        <input id="password_confirm" name="password_confirm" type="password" required class="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+      </div>
 
-<p class="mt-4">Déjà un compte ? <a href="/login" class="text-blue-600 hover:underline">Connexion</a></p>
+      <div>
+        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold my-2.5 py-2 px-4 rounded-lg shadow-md transition-transform duration-200 hover:scale-105">S'inscrire</button>
+      </div>
+    </form>
+
+    <p class="text-sm text-center text-gray-500 dark:text-gray-400 mt-4">
+      Déjà un compte ? <a href="/login" class="text-blue-600 dark:text-blue-400 hover:underline">Connexion</a>
+    </p>
+  </div>
+
+  <!-- Animation fade-in -->
+  <style>
+    .animate-fade-in {
+      animation: fadeIn 0.4s ease-out both;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
 {% endblock %}

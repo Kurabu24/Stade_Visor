@@ -1,9 +1,44 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<h2 class="text-xl mb-4">Connexion</h2>
-<form method="POST" class="space-y-2">
-  <input name="email" placeholder="Email" class="block w-full p-2 border rounded">
-  <input type="password" name="password" placeholder="Mot de passe" class="block w-full p-2 border rounded">
-  <button class="bg-blue-500 text-white px-4 py-2 rounded">Se connecter</button>
-</form>
+  <div class="max-w-md mx-auto mt-10 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 animate-fade-in">
+    <h2 class="text-2xl font-bold text-center text-blue-600 dark:text-blue-400 mb-6">Connexion</h2>
+
+    <form action="{{ url_for('login') }}" method="POST" class="space-y-6">
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Email</label>
+        <input type="email" name="email" id="email" required class="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Mot de passe</label>
+        <input type="password" name="password" id="password" required class="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+
+      <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold my-2.5 py-2 px-4 rounded-lg shadow transition">Se connecter</button>
+    </form>
+
+    <p class="text-sm text-center text-gray-500 dark:text-gray-400 mt-4">
+      Pas encore inscrit ?
+      <a href="{{ url_for('register') }}" class="text-blue-600 dark:text-blue-400 hover:underline">Créer un compte</a>
+    </p>
+  </div>
+
+  <style>
+    .animate-fade-in {
+      animation: fadeIn 0.4s ease-out both;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+  </style>
 {% endblock %}

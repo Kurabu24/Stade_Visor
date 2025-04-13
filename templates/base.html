@@ -1,35 +1,109 @@
 <!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="fr" class="{% if session.get('dark_mode') %}dark{% endif %}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>StadeVisor</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 text-gray-800">
-    <nav class="bg-blue-600 text-white p-4 flex justify-between items-center">
-        <h1 class="text-2xl font-bold">StadeVisor</h1>
-        <div class="space-x-4">
-            {% if session.user_id %}
-                <a href="/" class="hover:underline">Accueil</a>
-                <a href="/logout" class="hover:underline">Déconnexion</a>
-            {% else %}
-                <a href="/login" class="hover:underline">Connexion</a>
-                <a href="/register" class="hover:underline">Inscription</a>
-            {% endif %}
+    <link href="./../static/output.css" rel="stylesheet" />
+    <style>
+      html,
+      body {
+        transition: background-color 0.5s ease, color 0.5s ease;
+      }
+      
+      input,
+      label,
+      button,
+      p,
+      h2,
+      a {
+        transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+      }
+    </style>
+  </head>
+  <body class="dark:bg-gray-900 dark:text-gray-100 bg-gray-100 text-gray-800">
+    <!-- Sidebar -->
+    <div class="flex h-screen bg-gray-100 dark:bg-gray-900">
+      <aside class="w-64 bg-white dark:bg-gray-800 dark:text-white shadow-lg hidden md:block">
+        <div class="p-6 text-2xl font-bold text-blue-600 dark:text-blue-400 flex justify-center">
+          <a href="/"><div class="w-42 h-36 dark:w-42 drak:h-36 bg-[url('/static/images/stadevisor.png')] dark:bg-[url('/static/images/stadevisor_dark.png')] drak:bg-no-repeat dark:bg-center dark:bg-cover bg-no-repeat bg-center bg-cover"></div></a>
         </div>
-    </nav>
-    <div class="container mx-auto p-4">
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4">
-                    {% for message in messages %}
-                        <p>{{ message }}</p>
-                    {% endfor %}
-                </div>
+        <nav class="mt-6">
+          <ul class="space-y-2">
+            {% if session.user_id %}
+              <li>
+                <a href="/" class="block px-6 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Accueil</a>
+              </li>
+              <li>
+                <a href="/logout" class="block px-6 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Déconnexion</a>
+              </li>
+            {% else %}
+              <li>
+                <a href="/login" class="block px-6 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Connexion</a>
+              </li>
+              <li>
+                <a href="/register" class="block px-6 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Inscription</a>
+              </li>
             {% endif %}
-        {% endwith %}
-        {% block content %}{% endblock %}
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- Main content -->
+      <div class="flex-1 flex flex-col">
+        <!-- Top Navbar -->
+        <header class="bg-white dark:bg-gray-800 dark:text-white shadow px-4 py-3 flex justify-between items-center">
+          <div>
+            {% if session.user_id %}
+              <span class="text-gray-600 dark:text-gray-300 mr-2">Connecté</span>
+            {% else %}
+              <span class="text-gray-500 dark:text-gray-400">Visiteur</span>
+            {% endif %}
+          </div>
+          <div class="text-xl font-semibold text-blue-600 dark:text-blue-400">StadeVisor</div>
+
+          <!-- Bouton dark mode -->
+          <div class="px-6">
+            <button id="dark-mode-toggle" class="text-sm px-3 py-1 bg-gray-200 dark:bg-gray-800 rounded">🌙 / ☀️</button>
+          </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="flex-1 p-6 overflow-y-auto">
+          {% with messages=get_flashed_messages() %}
+            {% if messages %}
+              <div class="bg-yellow-100 dark:bg-yellow-300 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4 rounded">
+                {% for message in messages %}
+                  <p>{{ message }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          {% endwith %}
+
+          {% block content %}
+
+          {% endblock %}
+        </main>
+      </div>
     </div>
-</body>
+    <script>
+      document.getElementById('dark-mode-toggle').addEventListener('click', () => {
+        fetch('/toggle-dark-mode', {
+          method: 'POST',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const htmlTag = document.documentElement
+            if (data.dark_mode) {
+              htmlTag.classList.add('dark')
+            } else {
+              htmlTag.classList.remove('dark')
+            }
+          })
+      })
+    </script>
+  </body>
 </html>

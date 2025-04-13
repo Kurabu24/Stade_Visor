@@ -1,8 +1,9 @@
 # app.py
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash,jsonify
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
+from functools import wraps
 
 app = Flask(__name__)
 app.secret_key = 'secret-key'
@@ -12,6 +13,13 @@ def get_db_connection():
     conn = sqlite3.connect('stadevisor.db')
     conn.row_factory = sqlite3.Row  # Permet de récupérer les résultats sous forme de dictionnaires
     return conn
+
+@app.route('/toggle-dark-mode', methods=['POST'])
+def toggle_dark_mode():
+    current = session.get('dark_mode', False)
+    session['dark_mode'] = not current
+    return jsonify({'dark_mode': session['dark_mode']})
+
 
 def get_db():
     conn = sqlite3.connect(DATABASE)
@@ -43,9 +51,6 @@ def create_stadium():
             conn.close()
 
     return render_template("admin.html")
-@app.route("/admin")
-def admin_dashboard():
-    return render_template("admin.html")
 
 
 # Auth routes
@@ -61,6 +66,8 @@ def login():
         if user and check_password_hash(user["password_hash"], password):  # Assure-toi de vérifier le mot de passe de manière sécurisée
             session["user_id"] = user["id"]  # Stocker l'ID de l'utilisateur dans la session
             flash("Connexion réussie")
+            if user["role"] == "admin":
+                return redirect(url_for("admin_dashboard"))
             return redirect(url_for("index"))
         else:
             flash("Identifiants incorrects")
@@ -118,10 +125,38 @@ def logout():
 
 @app.route("/")
 def index():
+    user_id = session.get("user_id")
+    role = None
+    stadiums = []
     conn = get_db_connection()
     stadiums = conn.execute("SELECT * FROM stadiums").fetchall()
+
+    if user_id:
+        
+        user = conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+        if user:
+            role = user["role"]
     conn.close()
-    return render_template("index.html", stadiums=stadiums)
+
+    return render_template("index.html", role=role, stadiums=stadiums)
+
+@app.route('/admin/reservations/delete/<int:reservation_id>', methods=['POST'])
+def delete_reservation(reservation_id):
+    conn = get_db_connection()
+    conn.execute('DELETE FROM reservations WHERE id = ?', (reservation_id,))
+    conn.commit()
+    flash("Réservation supprimée.")
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/users/change_role/<int:user_id>', methods=['POST'])
+def change_user_role(user_id):
+    new_role = request.form['role']
+    conn = get_db_connection()
+    conn.execute('UPDATE users SET role = ? WHERE id = ?', (new_role, user_id))
+    conn.commit()
+    flash(f"Rôle de l'utilisateur {user_id} modifié en {new_role}.")
+    return redirect(url_for('admin_dashboard'))
+
 
 
 @app.route("/cancel_reservation", methods=["POST"])
@@ -158,6 +193,77 @@ def cancel_reservation():
     conn.close()
 
     return redirect(url_for("stadium_details", stadium_id=stadium_id))
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        user_id = session.get("user_id")
+        if not user_id:
+            return redirect(url_for("login"))
+
+        conn = get_db_connection()
+        user = conn.execute("SELECT role FROM users WHERE id = ?", (user_id,)).fetchone()
+        conn.close()
+
+        if not user or user["role"] != "admin":
+            flash("Accès réservé à l'administrateur.")
+            return redirect(url_for("index"))
+
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.route("/admin")
+@admin_required
+def admin_dashboard():
+    conn = get_db_connection()
+    users = conn.execute("SELECT * FROM users").fetchall()
+    stadiums = conn.execute("SELECT * FROM stadiums").fetchall()
+    reservations = conn.execute("SELECT * FROM reservations").fetchall()
+    conn.close()
+    return render_template("admin_dashboard.html", users=users, stadiums=stadiums, reservations=reservations)
+
+@app.route("/admin/delete_all_reservations", methods=["POST"])
+@admin_required
+def delete_all_reservations():
+    conn = get_db_connection()
+    conn.execute("DELETE FROM reservations")
+    conn.commit()
+    conn.close()
+    flash("Toutes les réservations ont été supprimées.")
+    return redirect(url_for("admin_dashboard"))
+
+@app.route("/admin/add_stadium", methods=["POST"])
+@admin_required
+def add_stadium():
+    name = request.form["name"]
+    location = request.form["location"]
+    capacity = request.form["capacity"]
+
+    conn = get_db_connection()
+    conn.execute("INSERT INTO stadiums (name, location, capacity) VALUES (?, ?, ?)",
+                (name, location, capacity))
+    conn.commit()
+    conn.close()
+    flash("Stade ajouté avec succès.")
+    return redirect(url_for("admin_dashboard"))
+
+@app.route("/admin/delete_stadium/<int:stadium_id>", methods=["POST"])
+@admin_required
+def delete_stadium(stadium_id):
+    conn = get_db_connection()
+
+    # Supprimer les réservations liées à ce stade
+    conn.execute("DELETE FROM reservations WHERE stadium_id = ?", (stadium_id,))
+
+    # Ensuite supprimer le stade
+    conn.execute("DELETE FROM stadiums WHERE id = ?", (stadium_id,))
+
+    conn.commit()
+    conn.close()
+
+    flash("Stade et ses réservations associées supprimés.", category='success')
+    return redirect(url_for("admin_dashboard"))
+
+
 
 
 @app.route("/stadium/<int:stadium_id>", methods=["GET", "POST"])
@@ -170,6 +276,7 @@ def stadium_details(stadium_id):
 
     conn = get_db_connection()
     stadium = conn.execute("SELECT * FROM stadiums WHERE id = ?", (stadium_id,)).fetchone()
+
     if stadium is None:
         flash("Le stade n'existe pas.")
         return redirect("/")
@@ -286,6 +393,31 @@ def view_calendar(stadium_id):
                         time_slots=time_slots,
                         reserved_slots=reserved_slots)
 
+def view_calendar2(stadium_id):
+    conn = get_db_connection()
+    stadium = conn.execute("SELECT * FROM stadiums WHERE id = ?", (stadium_id,)).fetchone()
+
+    if not stadium:
+        flash("Stade introuvable")
+        return redirect(url_for("index"))
+
+    # Date sélectionnée (par défaut aujourd'hui)
+    selected_date = request.args.get("date")
+    if not selected_date:
+        selected_date = datetime.today().strftime("%Y-%m-%d")
+
+
+    # Récupère toutes les réservations pour cette date
+    reservations = conn.execute("""
+        SELECT * FROM reservations
+        WHERE stadium_id = ? AND date = ?
+    """, (stadium_id, selected_date)).fetchall()
+
+    conn.close()
+
+    # Créneaux horaires de 8h à 18h
+    time_slots = [f"{h:02d}:00" for h in range(8, 19)]
+    reserved_slots = {r["time"]: r for r in reservations}
 
 @app.route("/reserve", methods=["POST"])
 def reserve():
@@ -340,17 +472,6 @@ def admin_stadiums():
     stadiums = conn.execute("SELECT * FROM stadiums").fetchall()
     return render_template('admin_stadiums.html', stadiums=stadiums)
 
-@app.route('/admin/stadiums/add', methods=['GET', 'POST'])
-def add_stadium():
-    if session.get('role') != 'admin':
-        return redirect(url_for('index'))
-    if request.method == 'POST':
-        conn = get_db()
-        conn.execute("INSERT INTO stadiums (name, location, capacity) VALUES (?, ?, ?)",
-                    (request.form['name'], request.form['location'], request.form['capacity']))
-        conn.commit()
-        return redirect(url_for('admin_stadiums'))
-    return render_template('admin_add_stadium.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

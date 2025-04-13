@@ -1,0 +1,8 @@
+/* input.css */
+@tailwind utilities;
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Tu peux aussi ajouter des classes personnalisées ici si besoin */
+
+@import "tailwindcss/preflight";
+@import "tailwindcss";

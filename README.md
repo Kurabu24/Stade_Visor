@@ -1,83 +1,90 @@
-# StadeVisor
+Voici un exemple de fichier `README.md` pour ton projet **StadeVisor**, qui explique ce que fait le projet, comment l’installer et le lancer localement :
 
-StadeVisor est une application web permettant d'afficher les disponibilités des stades à Marseille et de réserver des heures pour jouer librement.
+---
 
-## Prérequis
+# 🏟️ StadeVisor
 
-Avant d'installer le projet, assurez-vous d'avoir les éléments suivants installés sur votre machine :
+**StadeVisor** est une application web permettant de consulter la disponibilité des stades à Marseille et de réserver des créneaux horaires. Le site permet aux utilisateurs de s'inscrire, réserver des terrains, et aux entraîneurs ou administrateurs de gérer les créneaux.
 
-- [Node.js](https://nodejs.org/) (version 16 ou supérieure recommandée)
-- [npm](https://www.npmjs.com/) (installé avec Node.js)
-- [Git](https://git-scm.com/)
+## 🚀 Fonctionnalités principales
 
-## Installation
+- ✅ Affichage des détails des stades
+- 🗓️ Calendrier interactif avec créneaux horaires
+- 📆 Réservation de créneaux (limite de 3h/semaine pour les clients)
+- 🔒 Système d’authentification avec gestion des rôles (`client`, `trainer`, `admin`)
+- 🧑 Les utilisateurs peuvent annuler leurs propres réservations
 
-1. Clonez ce dépôt :
+## 📁 Structure du projet
 
-   ```bash
-   git clone https://github.com/votre-utilisateur/StadeVisor.git
-   cd StadeVisor
-   ```
+```
+/stadvisor/
+│
+├── static/                  # Fichiers statiques (CSS, JS, images)
+├── templates/               # Fichiers HTML (Jinja2)
+│   ├── base.html
+│   ├── index.html
+│   ├── admin.html
+│   ├── login.html
+│   ├── register.html
+│   ├── stadium_details.html
+│   └── calendar.html
+│
+├── app.py                   # Application Flask principale
+├── database.db              # Base de données SQLite
+├── schema.sql               # Script SQL pour créer les tables
+├── README.md                # Fichier d’explication du projet
+└── requirements.txt         # Dépendances Python
+```
 
-2. Installez les dépendances :
+## 🛠️ Installation
 
-   ```bash
-   npm install
-   ```
-
-3. Configurez la base de données SQLite :
-
-   ```bash
-   npm run migrate
-   ```
-
-## Démarrage du serveur
-
-Pour démarrer l'application en mode développement, exécutez :
+### 1. Cloner le dépôt
 
 ```bash
-npm start
+git clone https://github.com/ton-utilisateur/stadevisor.git
+cd stadevisor
 ```
 
-Le serveur sera accessible sur : `http://localhost:3000`
+### 2. Créer un environnement virtuel
 
-## Structure du projet
-
-```
-StadeVisor/
-├── controllers/      # Logique des routes
-├── models/           # Gestion de la base de données
-├── routes/           # Définition des routes Express
-├── views/            # Fichiers Mustache pour l'affichage
-├── public/           # Fichiers statiques (CSS, JS)
-├── app.js            # Point d'entrée principal
-├── package.json      # Fichier de configuration npm
-└── README.md         # Documentation du projet
+```bash
+python -m venv venv
+source venv/bin/activate   # Sur Windows : venv\Scripts\activate
 ```
 
-## Technologies utilisées
+### 3. Installer les dépendances
 
-- **Node.js** + **Express.js** : Backend
-- **Mustache** : Templates HTML
-- **SQLite** : Base de données
-- **Tailwind CSS** : Stylisation de l'interface utilisateur
+```bash
+pip install -r requirements.txt
+```
 
-## Fonctionnalités
+### 4. Créer la base de données
 
-- Affichage des stades et de leurs disponibilités
-- Formulaire de réservation d'un créneau
-- Interface responsive avec Tailwind CSS
-- Gestion des utilisateurs avec authentification
+Si ce n’est pas déjà fait, initialise la base de données avec le fichier `schema.sql` :
 
-## Contributions
+```bash
+sqlite3 database.db < schema.sql
+```
 
-Les contributions sont les bienvenues ! Merci de forker le dépôt et de proposer une pull request.
+Tu peux aussi créer un script Python d’initialisation si besoin.
 
-## Licence
+### 5. Lancer le serveur Flask
 
-Ce projet est sous licence MIT.
+```bash
+flask run
+```
 
-## Auteurs
+Par défaut, l’application est accessible sur : [http://127.0.0.1:5000](http://127.0.0.1:5000)
 
-📧 Contact : <akram.bouhraoua@etu.univ-amu.fr> - <martin.pouget@etu.univ-amu.fr>
-🌐 Site officiel : (en cours de developpement )
+## 🔑 Comptes par défaut (optionnel)
+
+Tu peux insérer des utilisateurs ou stades de test manuellement dans la base avec `sqlite3` ou via un script Python d’initialisation.
+
+## 📌 TODO et améliorations futures
+
+- Ajouter une interface d'administration avancée
+- Envoyer des mails de confirmation pour les réservations
+- Ajouter la possibilité de filtrer les stades par localisation/type
+- Interface mobile (responsive améliorée)
+
+---
