@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">Créer un compte</h2>
+
+<form action="/register" method="post" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <div class="mb-4">
+        <label class="block text-gray-700 font-bold mb-2" for="email">Adresse email</label>
+        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+               id="email" name="email" type="email" required>
+    </div>
+
+    <div class="mb-4">
+        <label class="block text-gray-700 font-bold mb-2" for="password">Mot de passe</label>
+        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+               id="password" name="password" type="password" required>
+    </div><div class="mb-4">
+        <label class="block text-gray-700 font-bold mb-2" for="password_confirm">Confirmer le mot de passe</label>
+        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+               id="password_confirm" name="password_confirm" type="password" required>
+    </div>
+
+    <div class="flex items-center justify-between">
+        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit">
+            S'inscrire
+        </button>
+    </div>
+</form>
+
+<p class="mt-4">Déjà un compte ? <a href="/login" class="text-blue-600 hover:underline">Connexion</a></p>
+{% endblock %}

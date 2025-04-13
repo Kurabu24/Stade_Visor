@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>{{ stadium.name }}</h1>
+  <p>{{ stadium.location }} - Capacité: {{ stadium.capacity }}</p>
+
+  <h2 class="text-xl font-bold my-4">Créneaux disponibles (Semaine actuelle)</h2>
+
+  <div class="overflow-x-auto">
+    <table class="table-auto w-full border border-gray-300">
+      <thead>
+        <tr class="bg-gray-100">
+          <th class="border px-2 py-1">Heure</th>
+          {% for day in calendar_days %}
+            <th class="border px-2 py-1">{{ day.strftime('%a %d/%m') }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for hour in hours %}
+          <tr>
+            <td class="border px-2 py-1 font-semibold">{{ hour }}</td>
+            {% for day in calendar_days %}
+              {% set status = calendar.get(day.strftime('%Y-%m-%d'), {}).get(hour, 'free') %}
+              <td class="border px-2 py-1">
+                {% if status == 'reserved' %}
+                  {% set reservation = user_reservations|selectattr('date', 'equalto', day.strftime('%Y-%m-%d'))|selectattr('time', 'equalto', hour)|first %}
+                  {% if reservation %}
+                    <!-- Si l'utilisateur a réservé ce créneau, afficher le bouton pour annuler -->
+                    <form action="{{ url_for('cancel_reservation') }}" method="post">
+                      <input type="hidden" name="reservation_id" value="{{ reservation.id }}" />
+                      <input type="hidden" name="stadium_id" value="{{ stadium.id }}" />
+                      <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-sm">Annuler</button>
+                    </form>
+                  {% else %}
+                    <div class="bg-red-500 text-white rounded px-2 py-1">Réservé</div>
+                  {% endif %}
+                {% else %}
+                  <!-- Si le créneau est libre, afficher le bouton pour réserver -->
+                  <form method="POST">
+                    <input type="hidden" name="date" value="{{ day.strftime('%Y-%m-%d') }}" />
+                    <input type="hidden" name="time" value="{{ hour }}" />
+                    <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-sm">Réserver</button>
+                  </form>
+                {% endif %}
+              </td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

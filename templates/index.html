@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">Liste des Stades</h2>
+
+<ul class="space-y-4">
+    {% for stadium in stadiums %}
+    <li class="p-4 border border-gray-300 rounded-md shadow-md">
+        <a href="{{ url_for('stadium_details', stadium_id=stadium.id) }}" class="text-blue-600 hover:underline">
+            <h3 class="text-xl font-semibold">{{ stadium.name }}</h3>
+            <p>{{ stadium.location }} - {{ stadium.capacity }} places</p>
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
