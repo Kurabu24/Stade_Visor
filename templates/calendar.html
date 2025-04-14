@@ -5,67 +5,64 @@
       Calendrier - {{ stadium.name }}
     </h1>
 
-    <!-- Sélecteur de date -->
-    <form method="get" class="mb-6 text-center">
+    <form method="get" class="mb-6 text-center" id="date-form">
       <label for="date" class="mr-2 font-semibold text-gray-700 dark:text-gray-200">Choisir une date :</label>
       <input
         type="date"
         name="date"
         id="date"
         value="{{ selected_date }}"
-        class="border rounded p-2 bg-white text-gray-900 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
-        onchange="this.form.submit()" />
+        class="border rounded p-2 bg-white text-gray-900 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600" />
     </form>
 
-    <!-- Affichage des créneaux horaires -->
-    <div class="grid grid-cols-1 gap-3">
-      {% for time in time_slots %}
-        {% set reservation = reserved_slots.get(time) %}
-        <div class="flex justify-between items-center border rounded p-4
-          {% if reservation %}
-            {% if reservation.user_id == session.get('user_id') %}
-              bg-yellow-200 dark:bg-yellow-300
-            {% elif reservation.user_role == 'trainer' %}
-              bg-yellow-400 dark:bg-yellow-500
-            {% else %}
-              bg-red-300 dark:bg-red-400
-            {% endif %}
-          {% else %}
-            bg-green-100 dark:bg-green-200
-          {% endif %}
-        ">
-          <span class="text-lg font-semibold text-gray-800 dark:text-gray-100">{{ time }}</span>
-
-          {% if reservation %}
-            {% if reservation.user_id == session.get('user_id') %}
-              <!-- Formulaire pour annuler la réservation -->
-              <form action="{{ url_for('cancel_reservation') }}" method="post">
-                <input type="hidden" name="reservation_id" value="{{ reservation.id }}">
-                <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded">Annuler</button>
-              </form>
-            {% else %}
-              <span class="text-sm italic text-gray-700 dark:text-gray-300">Créneau réservé</span>
-            {% endif %}
-          {% else %}
-            <!-- Formulaire pour réserver -->
-            <form action="{{ url_for('calendar', stadium_id=stadium.id) }}" method="post">
-              <input type="hidden" name="stadium_id" value="{{ stadium.id }}" />
-              <input type="hidden" name="date" value="{{ selected_date }}" />
-              <input type="hidden" name="time" value="{{ time }}" />
-              <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded">Réserver</button>
-            </form>
-          {% endif %}
-        </div>
-      {% endfor %}
+    <div id="tableau-reservations">
+      {% include 'partials/tableau_reservations.html' %}
     </div>
   </div>
-  <style>
-    .animate-fade-in {
-      animation: fadeIn 0.4s ease-in-out both;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      // Gestion du changement de date
+      $('#date').on('change', function() {
+        var selected_date = $(this).val();
+        var stadium_id = {{ stadium.id }};
+        refreshTable(stadium_id, selected_date);
+      });
+
+      // Gestion des formulaires de réservation et d'annulation
+      $(document).on('submit', '.reservation-form', function(event) {
+        event.preventDefault(); // Empêche la soumission classique
+        var form = $(this);
+        var stadium_id = {{ stadium.id }};
+        var selected_date = $('#date').val();
+
+        $.ajax({
+          url: form.attr('action'),
+          type: form.attr('method'),
+          data: form.serialize(),
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+          success: function(response) {
+            // Rafraîchir le tableau après l'action
+            refreshTable(stadium_id, selected_date);
+          },
+          error: function() {
+            alert('Une erreur est survenue.');
+          }
+        });
+      });
+
+      // Fonction pour rafraîchir le tableau
+      function refreshTable(stadium_id, date) {
+        $.ajax({
+          url: '/stadium/' + stadium_id + '?date=' + date,
+          type: 'GET',
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+          success: function(data) {
+            $('#tableau-reservations').html(data);
+          }
+        });
+      }
+    });
+  </script>
 {% endblock %}

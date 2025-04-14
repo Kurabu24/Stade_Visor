@@ -1,44 +1,64 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <div class="max-w-md mx-auto mt-10 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 animate-fade-in">
-    <h2 class="text-2xl font-bold text-center text-blue-600 dark:text-blue-400 mb-6">Connexion</h2>
-
-    <form action="{{ url_for('login') }}" method="POST" class="space-y-6">
-      <div>
-        <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Email</label>
-        <input type="email" name="email" id="email" required class="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+  <div class="flex justify-center items-center min-h-[calc(100vh-4rem)] bg-gradient-to-b from-gray-100 via-[#aed7f2] to-gray-100 dark:bg-gradient-to-r dark:from-gray-900 dark:via-indigo-900 dark:to-gray-900">
+    <div class="relative w-full bg-[#aed7f2] max-w-md dark:bg-gray-800/80 backdrop-blur-sm rounded-xl shadow-2xl p-8">
+      <input type="checkbox" id="chk" class="hidden" />
+      
+      <!-- Login Form -->
+      <div id="login-form" class="space-y-6 transition-all duration-500 ease-in-out">
+        <h2 class="text-3xl font-bold text-center text-blue-500 dark:text-white mb-8">Connexion</h2>
+        <form action="{{ url_for('login') }}" method="POST" class="space-y-6">
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-200">Email</label>
+            <input type="email" name="email" id="email" placeholder="Email" required class="w-full px-4 py-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" />
+          </div>
+          <div>
+            <label for="password" class="block text-sm font-medium text-gray-200">Mot de passe</label>
+            <input type="password" name="password" id="password" placeholder="Mot de passe" required class="w-full px-4 py-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" />
+          </div>
+          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow-md transition-transform duration-200 hover:scale-105">Se connecter</button>
+        </form>
+        <p class="text-sm text-center text-gray-400 mt-4">
+          Pas encore inscrit ? 
+          <label for="chk" class="text-blue-400 hover:underline cursor-pointer">Créer un compte</label>
+        </p>
       </div>
 
-      <div>
-        <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Mot de passe</label>
-        <input type="password" name="password" id="password" required class="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      <!-- Register Form -->
+      <div id="register-form" class="space-y-6 absolute inset-0 opacity-0 pointer-events-none transition-all duration-500 ease-in-out">
+        <h2 class="text-3xl font-bold text-center text-white mb-8">Inscription</h2>
+        <form action="{{ url_for('register') }}" method="POST" class="space-y-6">
+          <div>
+            <label for="reg-email" class="block text-sm font-medium text-gray-200">Email</label>
+            <input type="email" name="email" id="reg-email" placeholder="Email" required class="w-full px-4 py-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" />
+          </div>
+          <div>
+            <label for="reg-password" class="block text-sm font-medium text-gray-200">Mot de passe</label>
+            <input type="password" name="password" id="reg-password" placeholder="Mot de passe" required class="w-full px-4 py-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" />
+          </div>
+          <div>
+            <label for="password_confirm" class="block text-sm font-medium text-gray-200">Confirmer le mot de passe</label>
+            <input type="password" name="password_confirm" id="password_confirm" placeholder="Confirmer le mot de passe" required class="w-full px-4 py-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition" />
+          </div>
+          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow-md transition-transform duration-200 hover:scale-105">S'inscrire</button>
+        </form>
+        <p class="text-sm text-center text-gray-400 mt-4">
+          Déjà un compte ? 
+          <label for="chk" class="text-blue-400 hover:underline cursor-pointer">Connexion</label>
+        </p>
       </div>
-
-      <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold my-2.5 py-2 px-4 rounded-lg shadow transition">Se connecter</button>
-    </form>
-
-    <p class="text-sm text-center text-gray-500 dark:text-gray-400 mt-4">
-      Pas encore inscrit ?
-      <a href="{{ url_for('register') }}" class="text-blue-600 dark:text-blue-400 hover:underline">Créer un compte</a>
-    </p>
+    </div>
   </div>
 
   <style>
-    .animate-fade-in {
-      animation: fadeIn 0.4s ease-out both;
+    #chk:checked ~ #login-form {
+      opacity: 0;
+      pointer-events: none;
     }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    #chk:checked ~ #register-form {
+      opacity: 1;
+      pointer-events: auto;
     }
-
   </style>
 {% endblock %}

@@ -4,45 +4,40 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>StadeVisor</title>
-    <link href="./../static/output.css" rel="stylesheet" />
-    <style>
-      html,
-      body {
-        transition: background-color 0.5s ease, color 0.5s ease;
-      }
-      
-      input,
-      label,
-      button,
-      p,
-      h2,
-      a {
-        transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
-      }
-    </style>
+    <link href="/static/output.css" rel="stylesheet" />
   </head>
-  <body class="dark:bg-gray-900 dark:text-gray-100 bg-gray-100 text-gray-800">
+  <body class="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
     <!-- Sidebar -->
-    <div class="flex h-screen bg-gray-100 dark:bg-gray-900">
-      <aside class="w-64 bg-white dark:bg-gray-800 dark:text-white shadow-lg hidden md:block">
-        <div class="p-6 text-2xl font-bold text-blue-600 dark:text-blue-400 flex justify-center">
-          <a href="/"><div class="w-42 h-36 dark:w-42 drak:h-36 bg-[url('/static/images/stadevisor.png')] dark:bg-[url('/static/images/stadevisor_dark.png')] drak:bg-no-repeat dark:bg-center dark:bg-cover bg-no-repeat bg-center bg-cover"></div></a>
+    <div class="flex h-screen">
+      <aside id="sidebar" class="w-64 bg-white dark:bg-gray-800 dark:text-white shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out fixed top-0 left-0 h-full z-50">
+        <div class="p-6 flex justify-between items-center">
+          <a href="/">
+            <div class="w-42 h-36 bg-[url('/static/images/stadevisor.png')] dark:bg-[url('/static/images/stadevisor_dark.png')] bg-no-repeat bg-center bg-cover"></div>
+          </a>
+          <!-- Bouton pour fermer la sidebar -->
+          <button id="close-sidebar" class="text-gray-700 dark:text-gray-200 focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
         </div>
         <nav class="mt-6">
           <ul class="space-y-2">
             {% if session.user_id %}
               <li>
-                <a href="/" class="block px-6 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Accueil</a>
+                <a href="/" class="block px-6 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">Accueil</a>
               </li>
               <li>
-                <a href="/logout" class="block px-6 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Déconnexion</a>
+                <a href="/logout" class="block px-6 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">Déconnexion</a>
               </li>
             {% else %}
               <li>
-                <a href="/login" class="block px-6 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Connexion</a>
+                <a href="/auth" class="block px-6 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">Connexion/Inscription</a>
               </li>
+            {% endif %}
+            {% if session.role == 'admin' %}
               <li>
-                <a href="/register" class="block px-6 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Inscription</a>
+                <a href="/admin" class="block px-6 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">Admin Dashboard</a>
               </li>
             {% endif %}
           </ul>
@@ -52,27 +47,38 @@
       <!-- Main content -->
       <div class="flex-1 flex flex-col">
         <!-- Top Navbar -->
-        <header class="bg-white dark:bg-gray-800 dark:text-white shadow px-4 py-3 flex justify-between items-center">
-          <div>
-            {% if session.user_id %}
-              <span class="text-gray-600 dark:text-gray-300 mr-2">Connecté</span>
-            {% else %}
-              <span class="text-gray-500 dark:text-gray-400">Visiteur</span>
-            {% endif %}
+        <header class="bg-gradient-to-r from-blue-500 to-blue-700 dark:bg-gray-800 dark:text-white shadow px-4 py-3 flex justify-between items-center">
+          <div class="flex items-center">
+            <!-- Bouton pour ouvrir la sidebar -->
+            <button id="open-sidebar" class="text-white dark:text-gray-200 mr-4 focus:outline-none">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+              </svg>
+            </button>
+            <div>
+              {% if session.user_id %}
+                <span class="text-white dark:text-gray-300 mr-2">Connecté</span>
+              {% else %}
+                <span class="text-white dark:text-gray-400">Visiteur</span>
+              {% endif %}
+            </div>
           </div>
-          <div class="text-xl font-semibold text-blue-600 dark:text-blue-400">StadeVisor</div>
+          <div class="text-xl font-semibold text-white dark:text-blue-400">StadeVisor</div>
 
           <!-- Bouton dark mode -->
-          <div class="px-6">
-            <button id="dark-mode-toggle" class="text-sm px-3 py-1 bg-gray-200 dark:bg-gray-800 rounded">🌙 / ☀️</button>
+          <div class="px-4">
+            <button id="dark-mode-toggle" class="text-sm px-3 py-1 bg-white dark:bg-gray-700 text-blue-600 dark:text-white rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200">
+              <span class="dark:hidden">🌙</span>
+              <span class="hidden dark:inline">☀️</span>
+            </button>
           </div>
         </header>
 
         <!-- Page Content -->
-        <main class="flex-1 p-6 overflow-y-auto">
+        <main class="flex-1 p-6 overflow-y-auto bg-gray-100 dark:bg-gray-900">
           {% with messages=get_flashed_messages() %}
             {% if messages %}
-              <div class="bg-yellow-100 dark:bg-yellow-300 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4 rounded">
+              <div class="bg-yellow-100 dark:bg-yellow-800 border-l-4 border-yellow-500 dark:border-yellow-400 text-yellow-700 dark:text-yellow-200 p-4 mb-4 rounded-md">
                 {% for message in messages %}
                   <p>{{ message }}</p>
                 {% endfor %}
@@ -81,12 +87,33 @@
           {% endwith %}
 
           {% block content %}
-
           {% endblock %}
         </main>
       </div>
     </div>
+
     <script>
+      // Gestion du toggle de la sidebar
+      const sidebar = document.getElementById('sidebar');
+      const openSidebarButton = document.getElementById('open-sidebar');
+      const closeSidebarButton = document.getElementById('close-sidebar');
+
+      openSidebarButton.addEventListener('click', () => {
+        sidebar.classList.remove('-translate-x-full');
+      });
+
+      closeSidebarButton.addEventListener('click', () => {
+        sidebar.classList.add('-translate-x-full');
+      });
+
+      // Fermer la sidebar lorsqu'on clique à l'extérieur
+      document.addEventListener('click', (event) => {
+        if (!sidebar.contains(event.target) && !openSidebarButton.contains(event.target)) {
+          sidebar.classList.add('-translate-x-full');
+        }
+      });
+
+      // Gestion du dark mode
       document.getElementById('dark-mode-toggle').addEventListener('click', () => {
         fetch('/toggle-dark-mode', {
           method: 'POST',
@@ -94,16 +121,16 @@
             'X-Requested-With': 'XMLHttpRequest'
           }
         })
-          .then((response) => response.json())
-          .then((data) => {
-            const htmlTag = document.documentElement
+          .then(response => response.json())
+          .then(data => {
+            const htmlTag = document.documentElement;
             if (data.dark_mode) {
-              htmlTag.classList.add('dark')
+              htmlTag.classList.add('dark');
             } else {
-              htmlTag.classList.remove('dark')
+              htmlTag.classList.remove('dark');
             }
-          })
-      })
+          });
+      });
     </script>
   </body>
 </html>

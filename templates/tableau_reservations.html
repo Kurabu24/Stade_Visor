@@ -1,0 +1,47 @@
+<div class="grid grid-cols-1 gap-3">
+  {% for time in time_slots %}
+    {% set reservation = reserved_slots.get(time) %}
+    <div class="flex justify-between items-center border rounded p-4
+        {% if reservation %}
+        {% if reservation.user_id == session.get('user_id') %}
+          
+            bg-yellow-200 dark:bg-yellow-300
+
+        {% elif reservation.user_role == 'trainer' %}
+          
+            bg-yellow-400 dark:bg-yellow-500
+
+        {% else %}
+          
+            bg-red-300 dark:bg-red-400
+
+        {% endif %}
+      {% else %}
+        
+          bg-green-100 dark:bg-green-200
+
+      {% endif %}
+      ">
+      <span class="text-lg font-semibold text-gray-800 dark:text-gray-100">{{ time }}</span>
+
+      {% if reservation %}
+        {% if reservation.user_id == session.get('user_id') %}
+          <form action="{{ url_for('cancel_reservation') }}" method="post" class="reservation-form">
+            <input type="hidden" name="reservation_id" value="{{ reservation.id }}" />
+            <input type="hidden" name="stadium_id" value="{{ stadium.id }}" />
+            <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded">Annuler</button>
+          </form>
+        {% else %}
+          <span class="text-sm italic text-gray-700 dark:text-gray-300">Créneau réservé</span>
+        {% endif %}
+      {% else %}
+        <form action="{{ url_for('view_calendar', stadium_id=stadium.id) }}" method="post" class="reservation-form">
+          <input type="hidden" name="stadium_id" value="{{ stadium.id }}" />
+          <input type="hidden" name="date" value="{{ selected_date }}" />
+          <input type="hidden" name="time" value="{{ time }}" />
+          <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded">Réserver</button>
+        </form>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>

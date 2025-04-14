@@ -2,7 +2,7 @@
 module.exports = {
     // Enables class-based dark mode (important!)
     content: [
-        './templates/*.html',  // Flask or Django template files
+        './templates/*.{html,jinja}',  // Flask or Django template files
         './static/*.js',       // JS files (optional)
     ],
     darkMode: 'class',
